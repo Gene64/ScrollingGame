@@ -35,14 +35,36 @@ public class Game
     }
   }
   
+  public int userRowLocation() {
+	  for (int i = 0; i < 5; i++) {
+		  Location loc = new Location(i, 0);
+		  
+		  if (grid.getImage(loc).equals("user.gif"))
+			  return i;
+	  }
+	  return 0;
+  }
+  
   public void handleKeyPress()
   {
 	  int key = grid.checkLastKeyPressed();
+	  Location originalLoc = new Location(userRowLocation(), 0);
 	  
 	  if (key == 38) {
-		  // user moves up
+		  if (originalLoc.getRow() == 0)
+			  return;
+		  
+		  Location newLoc = new Location(originalLoc.getRow() - 1, 0);
+		  grid.setImage(newLoc, "user.gif");
+		  grid.setImage(originalLoc, "");
+		  
 	  } else if (key == 40) {
-		  // user moves down
+		  if (originalLoc.getRow() == 4)
+			  return;
+		  
+		  Location newLoc = new Location(originalLoc.getRow() + 1, 0);
+		  grid.setImage(newLoc, "user.gif");
+		  grid.setImage(originalLoc, "");
 	  }
   }
   
@@ -59,6 +81,16 @@ public class Game
   
   public void scrollLeft()
   {
+	  String currentImg;
+	  for (int x = 1; x < 9; x++) {
+		  for (int y = 0; y < 4; y++) {
+			  Location loc = new Location(y, x);
+			  currentImg = grid.getImage(loc);
+			  Location loc1 = new Location(y, x - 1);
+			  //if (!currentImg.equals("user.gif"))
+				//  grid.setImage(loc1, currentImg);
+		  }
+	  }
   }
   
   public void handleCollision(Location loc)
