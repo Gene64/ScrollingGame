@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class Game
 {
   private Grid grid;
@@ -35,10 +37,24 @@ public class Game
   
   public void handleKeyPress()
   {
+	  int key = grid.checkLastKeyPressed();
+	  
+	  if (key == 38) {
+		  // user moves up
+	  } else if (key == 40) {
+		  // user moves down
+	  }
   }
   
   public void populateRightEdge()
   {
+	Location loc = new Location((int)(Math.random() * 5), 9);
+	  
+	if (Math.random() < 0.5) {
+		grid.setImage(loc, "avoid.gif");
+	} else {
+		grid.setImage(loc, "get.gif");
+	}
   }
   
   public void scrollLeft()
@@ -56,7 +72,7 @@ public class Game
   
   public void updateTitle()
   {
-    grid.setTitle("Game:  " + getScore());
+    grid.setTitle("Scrolling Game | Current Score: " + getScore());
   }
   
   public boolean isGameOver()
@@ -64,14 +80,9 @@ public class Game
     return false;
   }
   
-  public static void test()
-  {
-    Game game = new Game();
-    game.play();
-  }
-  
   public static void main(String[] args)
   {
-    test();
+	  Game game = new Game();
+	  game.play();
   }
 }
