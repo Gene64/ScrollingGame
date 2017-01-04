@@ -87,8 +87,8 @@ public class Game
 			  Location loc = new Location(y, x);
 			  currentImg = grid.getImage(loc);
 			  Location loc1 = new Location(y, x - 1);
-			  //if (!currentImg.equals("user.gif"))
-				//  grid.setImage(loc1, currentImg);
+			  if (currentImage != null && !currentImg.equals("user.gif"))
+				  grid.setImage(loc1, currentImg);
 		  }
 	  }
   }
