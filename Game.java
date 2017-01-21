@@ -1,3 +1,5 @@
+import java.io.File;
+
 public class Game {
 	private Grid grid;
 	private int userRow;
@@ -17,7 +19,7 @@ public class Game {
 
 	public void play() {
 		while (!isGameOver()) {
-			grid.pause(100);
+			grid.pause(75);
 			handleKeyPress();
 			if (msElapsed % 300 == 0) {
 				scrollLeft();
@@ -30,9 +32,8 @@ public class Game {
 
 	public int userRowLocation() {
 		for (int i = 0; i < 5; i++) {
-			Location loc = new Location(i, 0);
 
-			if (grid.getImage(loc).equals("user.gif"))
+			if (grid.getImage(new Location(i, 0)).equals("user.gif"))
 				return i;
 		}
 		return 0;
@@ -71,7 +72,7 @@ public class Game {
 	public void populateRightEdge() {
 		Location loc = new Location((int) (Math.random() * 5), 9);
 
-		if (Math.random() < 0.5) {
+		if (Math.random() < 0.4) {
 			grid.setImage(loc, "avoid.gif");
 		} else {
 			grid.setImage(loc, "get.gif");
@@ -95,19 +96,14 @@ public class Game {
 				}
 			}
 		}
-		// removeFirstColumnImages();
-	}
-
-	public void removeFirstColumnImages() {
-		for (int i = 0; i < 5; i++) {
-			if (grid.getImage(new Location(i, 0)) != null && grid.getImage(new Location(i, 0)).equals("user.gif"))
-				grid.setImage(new Location(i, 0), null);
-		}
 	}
 
 	public void handleCollision(Location loc) {
 		if (grid.getImage(loc).equals("get.gif")) {
 			timesGet++;
+			
+			Sound.playSound(System.getProperty("user.dir") + File.separator + "get.wav");
+			
 		} else if (grid.getImage(loc).equals("avoid.gif")) {
 			timesAvoid++;
 		}
@@ -131,7 +127,6 @@ public class Game {
 	}
 
 	public static void main(String[] args) {
-		Game game = new Game();
-		game.play();
+		new Game().play();
 	}
 }
