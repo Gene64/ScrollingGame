@@ -28,6 +28,8 @@ public class Game {
 			updateTitle();
 			msElapsed += 100;
 		}
+		
+		Sound.playSound("gameover.wav");
 	}
 
 	public int userRowLocation() {
@@ -100,11 +102,10 @@ public class Game {
 
 	public void handleCollision(Location loc) {
 		if (grid.getImage(loc).equals("get.gif")) {
+			Sound.playSound("get.wav");
 			timesGet++;
-			
-			Sound.playSound(System.getProperty("user.dir") + File.separator + "get.wav");
-			
 		} else if (grid.getImage(loc).equals("avoid.gif")) {
+			Sound.playSound("avoid.wav");
 			timesAvoid++;
 		}
 
