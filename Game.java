@@ -1,5 +1,3 @@
-import java.io.File;
-
 public class Game {
 	private Grid grid;
 	private int userRow;
@@ -17,7 +15,7 @@ public class Game {
 		grid.setImage(new Location(userRow, 0), "user.gif");
 	}
 
-	public void play() {
+	private void play() {
 		while (!isGameOver()) {
 			grid.pause(75);
 			handleKeyPress();
@@ -32,7 +30,7 @@ public class Game {
 		Sound.playSound("gameover.wav");
 	}
 
-	public int userRowLocation() {
+	private int userRowLocation() {
 		for (int i = 0; i < 5; i++) {
 
 			if (grid.getImage(new Location(i, 0)).equals("user.gif"))
@@ -41,7 +39,7 @@ public class Game {
 		return 0;
 	}
 
-	public void handleKeyPress() {
+	private void handleKeyPress() {
 		int key = grid.checkLastKeyPressed();
 		Location originalLoc = new Location(userRowLocation(), 0);
 
@@ -71,7 +69,7 @@ public class Game {
 		}
 	}
 
-	public void populateRightEdge() {
+	private void populateRightEdge() {
 		Location loc = new Location((int) (Math.random() * 5), 9);
 
 		if (Math.random() < 0.4) {
@@ -81,7 +79,7 @@ public class Game {
 		}
 	}
 
-	public void scrollLeft() {
+	private void scrollLeft() {
 		if (grid.getImage(new Location(userRowLocation(), 1)) != null)
 			handleCollision(new Location(userRowLocation(), 1));
 
@@ -100,34 +98,53 @@ public class Game {
 		}
 	}
 
-	public void handleCollision(Location loc) {
+	private void handleCollision(Location loc) {
 		if (grid.getImage(loc).equals("get.gif")) {
 			Sound.playSound("get.wav");
 			timesGet++;
 		} else if (grid.getImage(loc).equals("avoid.gif")) {
+			grid.setImage(loc, "");
+			grid.setImage(new Location(this.userRowLocation(), 0), "avoid.gif");
 			Sound.playSound("avoid.wav");
 			timesAvoid++;
+			grid.pause(3000);
+			resetScreen();
 		}
 
 		grid.setImage(loc, null);
 	}
 
-	public int getScore() {
+	private int getScore() {
 		return timesGet;
 	}
 
-	public void updateTitle() {
+	private void updateTitle() {
 		if (timesAvoid == 3)
 			grid.setTitle("Game Over - Try Again");
 		else
 			grid.setTitle("Scrolling Game | Current Score: " + getScore() + "| Lives: " + (3 - timesAvoid));
 	}
 
-	public boolean isGameOver() {
+	private boolean isGameOver() {
 		return timesAvoid == 3;
 	}
 
 	public static void main(String[] args) {
 		new Game().play();
+	}
+	
+	private void resetScreen() {
+		for (int x = 0; x < 10; x++) {
+			for (int y = 0; y < 5; y++) {
+
+				if (grid.getImage(new Location(y, x)) != null) {
+					grid.setImage(new Location(y, x), "");
+				}
+			}
+		}
+		if (timesAvoid != 3)
+			grid.setImage(new Location(0, 0), "user.gif");
+		else
+			grid.setImage(new Location(0, 0), "gameover.gif");
 	}
 }
