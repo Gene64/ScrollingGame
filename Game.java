@@ -129,20 +129,20 @@ public class Game
   
   public int getScore()
   {
-    return timesGet - timesAvoid;
+    return timesGet;
   }
   
   public void updateTitle()
   {
-    if (timesGet < timesAvoid)
+    if (timesAvoid == 3)
       grid.setTitle("Game Over - Try Again");
     else
-      grid.setTitle("Scrolling Game | Current Score: " + getScore());
+      grid.setTitle("Scrolling Game | Current Score: " + getScore() + "| Lives: " + (3 - timesAvoid));
   }
   
   public boolean isGameOver()
   {
-    return timesGet < timesAvoid;
+    return timesAvoid == 3;
   }
   
   public static void main(String[] args)
