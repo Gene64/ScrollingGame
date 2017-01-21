@@ -4,6 +4,8 @@ public class Game {
 	private int msElapsed;
 	private int timesGet;
 	private int timesAvoid;
+	private int level = 1;
+	private bool invulnerable;
 
 	public Game() {
 		grid = new Grid(5, 10);
@@ -17,7 +19,7 @@ public class Game {
 
 	private void play() {
 		while (!isGameOver()) {
-			grid.pause(75);
+			Grid.pause(75);
 			handleKeyPress();
 			if (msElapsed % 300 == 0) {
 				scrollLeft();
@@ -26,7 +28,7 @@ public class Game {
 			updateTitle();
 			msElapsed += 100;
 		}
-		
+		grid.setImage(new Location(0, 0), "gameover.gif");
 		Sound.playSound("gameover.wav");
 	}
 
@@ -102,12 +104,13 @@ public class Game {
 		if (grid.getImage(loc).equals("get.gif")) {
 			Sound.playSound("get.wav");
 			timesGet++;
+			updateLevel();
 		} else if (grid.getImage(loc).equals("avoid.gif")) {
 			grid.setImage(loc, "");
 			grid.setImage(new Location(this.userRowLocation(), 0), "avoid.gif");
 			Sound.playSound("avoid.wav");
 			timesAvoid++;
-			grid.pause(3000);
+			Grid.pause(3000);
 			resetScreen();
 		}
 
@@ -117,12 +120,17 @@ public class Game {
 	private int getScore() {
 		return timesGet;
 	}
+	
+	private void updateLevel() {
+		if (level == 1 && timesGet >= 50)
+			level++;
+	}
 
 	private void updateTitle() {
 		if (timesAvoid == 3)
 			grid.setTitle("Game Over - Try Again");
 		else
-			grid.setTitle("Scrolling Game | Current Score: " + getScore() + "| Lives: " + (3 - timesAvoid));
+			grid.setTitle("Can You Get to 100? | Current Score: " + getScore() + " | Lives: " + (3 - timesAvoid));
 	}
 
 	private boolean isGameOver() {
@@ -142,9 +150,6 @@ public class Game {
 				}
 			}
 		}
-		if (timesAvoid != 3)
-			grid.setImage(new Location(0, 0), "user.gif");
-		else
-			grid.setImage(new Location(0, 0), "gameover.gif");
+		grid.setImage(new Location(0, 0), "user.gif");
 	}
 }
