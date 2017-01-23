@@ -33,6 +33,7 @@ public class Game {
 			msElapsed += 100;
 
 			if (invul && InvulTimer.getTimerTick() == 10) {
+				grid.setImage(new Location(userRowLocation(), 0), "user.png");
 				invul = false;
 				InvulTimer.resetTimer();
 			}
