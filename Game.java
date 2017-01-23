@@ -8,7 +8,6 @@ public class Game {
 	private int msElapsed;
 	private int timesGet;
 	private int timesAvoid;
-	private int msInvul;
 	private float speed = 1.0f;
 	private boolean invul;
 
@@ -33,28 +32,37 @@ public class Game {
 			updateTitle();
 			msElapsed += 100;
 			
-			
 			if (invul && InvulTimer.getTimerTick() == 10) {
 				invul = false;
+				InvulTimer.resetTimer();
 			}
 		}
 		setGameOverScreen();
-		Sound.playSound("gameover.wav");
+		Sound.playSound("gameover");
 	}
 	
 	private void setGameOverScreen() {
-		for (int x = 0; x < 10; x++) {
-			for (int y = 0; y < 5; y++) {
-				grid.setImage(new Location(y, x), "avoid.png");
+		if (timesAvoid == 3) {
+			for (int x = 0; x < 10; x++) {
+				for (int y = 0; y < 5; y++) {
+					grid.setImage(new Location(y, x), "avoid.png");
+				}
 			}
+			grid.setImage(new Location(0, 0), "gameover.png");
+		} else {
+			for (int x = 0; x < 10; x++) {
+				for (int y = 0; y < 5; y++) {
+					grid.setImage(new Location(y, x), "get.png");
+				}
+			}
+			grid.setImage(new Location(0, 0), "useri.png");
 		}
-		grid.setImage(new Location(0, 0), "gameover.png");
 	}
 
 	private int userRowLocation() {
 		for (int i = 0; i < 5; i++) {
 
-			if (grid.getImage(new Location(i, 0)).equals(userImage()))
+			if (grid.getImage(new Location(i, 0)) != null && grid.getImage(new Location(i, 0)).equals(userImage()))
 				return i;
 		}
 		return 0;
@@ -126,9 +134,16 @@ public class Game {
 
 	private void handleCollision(Location loc, int handle) {
 		if (grid.getImage(loc).equals("get.png") || (grid.getImage(loc).equals("avoid.png") && invul)) {
-			Sound.playSound("get.wav");
-			timesGet++;
-			updateLevel();
+			Sound.playSound("get");
+			
+			if (++timesGet == 100) {
+				updateTitle();
+				Sound.playSound("win");
+				setGameOverScreen();
+				return;
+			}
+			increaseSpeed();
+			
 		} else if (grid.getImage(loc).equals("avoid.png")) {
 			
 			if (handle == 0) {
@@ -138,17 +153,18 @@ public class Game {
 				grid.setImage(new Location(this.userRowLocation(), 0), "");
 			}
 			
-			Sound.playSound("avoid.wav");
+			Sound.playSound("avoid");
 			timesAvoid++;
 			Grid.pause(3000);
 			resetScreen();
 		} else if (grid.getImage(loc).equals("life.png")) {
-			Sound.playSound("life.wav");
+			Sound.playSound("life");
 			timesAvoid--;
 		} else if (grid.getImage(loc).equals("invul.png")){
 			invul = true;
-			Sound.playSound("invul.wav");
+			Sound.playSound("invul");
 			grid.setImage(new Location(this.userRowLocation(), 0), "useri.png");
+			new InvulTimer();
 		}
 		grid.setImage(loc, null);
 	}
@@ -157,19 +173,21 @@ public class Game {
 		return timesGet;
 	}
 	
-	private void updateLevel() {
+	private void increaseSpeed() {
 		speed -= 0.01f;
 	}
 
 	private void updateTitle() {
 		if (timesAvoid == 3)
-			grid.setTitle("Game Over - Try Again");
+			grid.setTitle("Game Over! | Your Score was " + timesGet + " | Want To Try Again?");
+		else if (timesGet == 100)
+			grid.setTitle("Game Won! | You've Got to 100 Points! | Want To Play Again?");
 		else
 			grid.setTitle("Can You Get to 100? | Current Score: " + getScore() + " | Lives: " + (3 - timesAvoid));
 	}
 
 	private boolean isGameOver() {
-		return timesAvoid == 3;
+		return timesAvoid == 3 || timesGet == 100;
 	}
 	
 	private void resetScreen() {

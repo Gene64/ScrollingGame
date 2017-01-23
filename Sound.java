@@ -8,7 +8,7 @@ public class Sound {
 			public void run() {
 				try {
 					Clip clip = AudioSystem.getClip();
-					URL fileURL = new URL("file:///" + System.getProperty("user.dir") + File.separator + url);
+					URL fileURL = new URL("file:///" + System.getProperty("user.dir") + File.separator + url + ".wav");
 					AudioInputStream inputStream = AudioSystem.getAudioInputStream(fileURL);
 					clip.open(inputStream);
 					clip.start();
