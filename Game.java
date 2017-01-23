@@ -4,8 +4,8 @@ public class Game {
 	private int msElapsed;
 	private int timesGet;
 	private int timesAvoid;
-	private int level = 1;
 	private int msInvul;
+	private float speed = 1.0f;
 	private boolean invul;
 
 	public Game() {
@@ -20,7 +20,7 @@ public class Game {
 
 	private void play() {
 		while (!isGameOver()) {
-			Grid.pause(100);
+			Grid.pause((int)(100 * speed));
 			handleKeyPress();
 			if (msElapsed % 300 == 0) {
 				scrollLeft();
@@ -127,13 +127,11 @@ public class Game {
 		} else if (grid.getImage(loc).equals("life.png")) {
 			Sound.playSound("life.wav");
 			timesAvoid--;
-			updateLevel();
 		} else if (grid.getImage(loc).equals("invul.png")){
 			invul = true;
 			Sound.playSound("invul.wav");
 			grid.setImage(new Location(this.userRowLocation(), 0), "useri.png");
 		}
-
 		grid.setImage(loc, null);
 	}
 
@@ -142,8 +140,7 @@ public class Game {
 	}
 	
 	private void updateLevel() {
-		if (level == 1 && timesGet >= 50)
-			level++;
+		speed -= 0.01f;
 	}
 
 	private void updateTitle() {
