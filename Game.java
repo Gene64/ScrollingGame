@@ -1,3 +1,7 @@
+/**
+* Collaboration: Looked up how to play sound
+*/
+
 public class Game {
 	private Grid grid;
 	private int userRow;
@@ -34,8 +38,17 @@ public class Game {
 				msInvul = 0;
 			}
 		}
-		grid.setImage(new Location(0, 0), "gameover.png");
+		setGameOverScreen();
 		Sound.playSound("gameover.wav");
+	}
+	
+	private void setGameOverScreen() {
+		for (int x = 0; x < 10; x++) {
+			for (int y = 0; y < 5; y++) {
+				grid.setImage(new Location(y, x), "avoid.png");
+			}
+		}
+		grid.setImage(new Location(0, 0), "gameover.png");
 	}
 
 	private int userRowLocation() {
@@ -117,9 +130,14 @@ public class Game {
 			timesGet++;
 			updateLevel();
 		} else if (grid.getImage(loc).equals("avoid.png")) {
-			if (handle == 0)
+			
+			if (handle == 0) {
 				grid.setImage(loc, "");
-			grid.setImage(new Location(this.userRowLocation(), 0), "avoid.png");
+				grid.setImage(new Location(this.userRowLocation(), 0), "avoid.png");
+			} else {
+				grid.setImage(new Location(this.userRowLocation(), 0), "");
+			}
+			
 			Sound.playSound("avoid.wav");
 			timesAvoid++;
 			Grid.pause(3000);
@@ -153,10 +171,6 @@ public class Game {
 	private boolean isGameOver() {
 		return timesAvoid == 3;
 	}
-
-	public static void main(String[] args) {
-		new Game().play();
-	}
 	
 	private void resetScreen() {
 		for (int x = 0; x < 10; x++) {
@@ -174,5 +188,9 @@ public class Game {
 		if (invul)
 			return "useri.png";
 		return "user.png";
+	}
+	
+	public static void main(String[] args) {
+		new Game().play();
 	}
 }
