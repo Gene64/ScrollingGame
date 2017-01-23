@@ -5,7 +5,8 @@ public class Game {
 	private int timesGet;
 	private int timesAvoid;
 	private int level = 1;
-	private boolean invulnerable;
+	private int msInvul;
+	private boolean invul;
 
 	public Game() {
 		grid = new Grid(5, 10);
@@ -19,7 +20,7 @@ public class Game {
 
 	private void play() {
 		while (!isGameOver()) {
-			Grid.pause(75);
+			Grid.pause(100);
 			handleKeyPress();
 			if (msElapsed % 300 == 0) {
 				scrollLeft();
@@ -27,6 +28,11 @@ public class Game {
 			}
 			updateTitle();
 			msElapsed += 100;
+			
+			if (invul && ++msInvul == 100) {
+				invul = false;
+				msInvul = 0;
+			}
 		}
 		grid.setImage(new Location(0, 0), "gameover.png");
 		Sound.playSound("gameover.wav");
@@ -35,7 +41,7 @@ public class Game {
 	private int userRowLocation() {
 		for (int i = 0; i < 5; i++) {
 
-			if (grid.getImage(new Location(i, 0)).equals("user.png"))
+			if (grid.getImage(new Location(i, 0)).equals(userImage()))
 				return i;
 		}
 		return 0;
@@ -53,7 +59,7 @@ public class Game {
 			if (grid.getImage(newLoc) != null)
 				handleCollision(newLoc);
 
-			grid.setImage(newLoc, "user.png");
+			grid.setImage(newLoc, userImage());
 			grid.setImage(originalLoc, "");
 
 		} else if (key == 40 && originalLoc.getRow() != 4) {
@@ -63,7 +69,7 @@ public class Game {
 			if (grid.getImage(newLoc) != null)
 				handleCollision(newLoc);
 
-			grid.setImage(newLoc, "user.png");
+			grid.setImage(newLoc, userImage());
 			grid.setImage(originalLoc, "");
 		}
 	}
@@ -79,8 +85,10 @@ public class Game {
 			grid.setImage(loc, "get.png");
 		} else if (random < 0.99){
 			grid.setImage(loc, "life.png");
-		} else {
+		} else if (!invul) {
 			grid.setImage(loc, "invul.png");
+		} else {
+			grid.setImage(loc, "get.png");
 		}
 	}
 
@@ -105,7 +113,7 @@ public class Game {
 
 	private void handleCollision(Location loc) {
 		
-		if (grid.getImage(loc).equals("get.png") || (grid.getImage(loc).equals("avoid.png") && invulnerable)) {
+		if (grid.getImage(loc).equals("get.png") || (grid.getImage(loc).equals("avoid.png") && invul)) {
 			Sound.playSound("get.wav");
 			timesGet++;
 			updateLevel();
@@ -121,8 +129,9 @@ public class Game {
 			timesAvoid--;
 			updateLevel();
 		} else if (grid.getImage(loc).equals("invul.png")){
+			invul = true;
 			Sound.playSound("invul.wav");
-			invulnerable = true;
+			grid.setImage(new Location(this.userRowLocation(), 0), "useri.png");
 		}
 
 		grid.setImage(loc, null);
@@ -162,5 +171,11 @@ public class Game {
 			}
 		}
 		grid.setImage(new Location(0, 0), "user.png");
+	}
+	
+	private String userImage() {
+		if (invul)
+			return "useri.png";
+		return "user.png";
 	}
 }
