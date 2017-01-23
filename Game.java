@@ -1,5 +1,5 @@
 /**
- * Collaboration: - Looked up how to play sound - Looked up how to use a timer
+ * Collaboration: Looked up how to play sound & Looked up how to use a timer
  */
 
 public class Game {
@@ -168,7 +168,7 @@ public class Game {
 		} else if (img.equals("life.png")) {
 			Sound.playSound("life");
 			timesAvoid--;
-		} else if (img.equals("invul.png")) {
+		} else if (img.equals("invul.png") && !invul) {
 			Sound.playSound("invul");
 			grid.setImage(new Location(this.userRowLocation(), 0), "useri.png");
 			invul = true;
