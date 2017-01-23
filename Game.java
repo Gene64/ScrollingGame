@@ -107,9 +107,9 @@ public class Game {
 
 		if (random < 0.4) {
 			grid.setImage(loc, "avoid.png");
-		} else if (random < 0.98) {
+		} else if (random < 0.96) {
 			grid.setImage(loc, "get.png");
-		} else if (random < 0.99) {
+		} else if (random < 0.97) {
 			grid.setImage(loc, "life.png");
 		} else if (!invul) {
 			grid.setImage(loc, "invul.png");
@@ -168,9 +168,9 @@ public class Game {
 			Sound.playSound("life");
 			timesAvoid--;
 		} else if (img.equals("invul.png")) {
-			invul = true;
 			Sound.playSound("invul");
 			grid.setImage(new Location(this.userRowLocation(), 0), "useri.png");
+			invul = true;
 			new InvulTimer();
 		}
 	}
@@ -187,7 +187,7 @@ public class Game {
 		if (timesAvoid == 3)
 			grid.setTitle("Game Over! | Your Score was " + timesGet + " | Want To Try Again?");
 		else if (timesGet == 100)
-			grid.setTitle("Game Won! | You've Got to 100 Points! | Want To Play Again?");
+			grid.setTitle("Game Won! | You've Reached to 100 Points! | Want To Play Again?");
 		else
 			grid.setTitle("Can You Get to 100? | Current Score: " + getScore() + " | Lives: " + (3 - timesAvoid));
 	}
