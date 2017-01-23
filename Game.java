@@ -57,7 +57,7 @@ public class Game {
 			Location newLoc = new Location(originalLoc.getRow() - 1, 0);
 
 			if (grid.getImage(newLoc) != null)
-				handleCollision(newLoc);
+				handleCollision(newLoc, 1);
 
 			grid.setImage(newLoc, userImage());
 			grid.setImage(originalLoc, "");
@@ -67,7 +67,7 @@ public class Game {
 			Location newLoc = new Location(originalLoc.getRow() + 1, 0);
 
 			if (grid.getImage(newLoc) != null)
-				handleCollision(newLoc);
+				handleCollision(newLoc, 1);
 
 			grid.setImage(newLoc, userImage());
 			grid.setImage(originalLoc, "");
@@ -95,7 +95,7 @@ public class Game {
 	private void scrollLeft() {
 		
 		if (grid.getImage(new Location(userRowLocation(), 1)) != null)
-			handleCollision(new Location(userRowLocation(), 1));
+			handleCollision(new Location(userRowLocation(), 1), 0);
 
 		// Columns
 		for (int x = 1; x < 10; x++) {
@@ -111,14 +111,14 @@ public class Game {
 		}
 	}
 
-	private void handleCollision(Location loc) {
-		
+	private void handleCollision(Location loc, int handle) {
 		if (grid.getImage(loc).equals("get.png") || (grid.getImage(loc).equals("avoid.png") && invul)) {
 			Sound.playSound("get.wav");
 			timesGet++;
 			updateLevel();
 		} else if (grid.getImage(loc).equals("avoid.png")) {
-			grid.setImage(loc, "");
+			if (handle == 0)
+				grid.setImage(loc, "");
 			grid.setImage(new Location(this.userRowLocation(), 0), "avoid.png");
 			Sound.playSound("avoid.wav");
 			timesAvoid++;
