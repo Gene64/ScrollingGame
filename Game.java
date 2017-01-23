@@ -1,5 +1,7 @@
 /**
-* Collaboration: Looked up how to play sound
+* Collaboration:
+* - Looked up how to play sound
+* - Looked up how to use a timer
 */
 
 public class Game {
@@ -123,9 +125,10 @@ public class Game {
 			// Rows
 			for (int y = 0; y < 5; y++) {
 				Location currentLoc = new Location(y, x);
+				Location nextLoc = new Location(y, x -1);
 
-				if (grid.getImage(currentLoc) != null) {
-					grid.setImage(new Location(y, x - 1), grid.getImage(currentLoc));
+				if (grid.getImage(currentLoc) != null && (grid.getImage(nextLoc) == null || !grid.getImage(nextLoc).equals(userImage()))) {
+					grid.setImage(nextLoc, grid.getImage(currentLoc));
 					grid.setImage(currentLoc, "");
 				}
 			}
@@ -166,7 +169,6 @@ public class Game {
 			grid.setImage(new Location(this.userRowLocation(), 0), "useri.png");
 			new InvulTimer();
 		}
-		grid.setImage(loc, null);
 	}
 
 	private int getScore() {

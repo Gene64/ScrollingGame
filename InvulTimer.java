@@ -4,9 +4,10 @@ import java.util.TimerTask;
 public class InvulTimer {
 	private static int timerTick;
 	
-	private static Timer timer = new Timer();
+	private static Timer timer;
 	
 	public InvulTimer() {
+		timer = new Timer();
 		createTimer();
 	}
 	
