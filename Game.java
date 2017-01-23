@@ -48,14 +48,14 @@ public class Game {
 					grid.setImage(new Location(y, x), "avoid.png");
 				}
 			}
-			grid.setImage(new Location(0, 0), "gameover.png");
+			grid.setImage(new Location(2, 4), "gameover.png");
 		} else {
 			for (int x = 0; x < 10; x++) {
 				for (int y = 0; y < 5; y++) {
 					grid.setImage(new Location(y, x), "get.png");
 				}
 			}
-			grid.setImage(new Location(0, 0), "useri.png");
+			grid.setImage(new Location(2, 4), "useri.png");
 		}
 	}
 
@@ -73,12 +73,16 @@ public class Game {
 		int key = grid.checkLastKeyPressed();
 
 		Location originalLoc = new Location(userRowLocation(), 0);
+		
+		String imgMovingInto;
 
 		if (key == 38 && originalLoc.getRow() != 0) {
+			
 			Location newLoc = new Location(originalLoc.getRow() - 1, 0);
+			imgMovingInto = grid.getImage(newLoc);
 
 			if (grid.getImage(newLoc) != null)
-				handleCollision(newLoc, 1);
+				handleCollision(imgMovingInto, 1);
 
 			grid.setImage(newLoc, userImage());
 			grid.setImage(originalLoc, "");
@@ -86,9 +90,10 @@ public class Game {
 		} else if (key == 40 && originalLoc.getRow() != 4) {
 
 			Location newLoc = new Location(originalLoc.getRow() + 1, 0);
+			imgMovingInto = grid.getImage(newLoc);
 
 			if (grid.getImage(newLoc) != null)
-				handleCollision(newLoc, 1);
+				handleCollision(imgMovingInto, 1);
 
 			grid.setImage(newLoc, userImage());
 			grid.setImage(originalLoc, "");
@@ -114,28 +119,29 @@ public class Game {
 	}
 
 	private void scrollLeft() {
-
-		if (grid.getImage(new Location(userRowLocation(), 1)) != null)
-			handleCollision(new Location(userRowLocation(), 1), 0);
-
+		String imgComingAtUser = grid.getImage(new Location(userRowLocation(), 1));
+		
 		// Columns
 		for (int x = 1; x < 10; x++) {
 			// Rows
 			for (int y = 0; y < 5; y++) {
 				Location currentLoc = new Location(y, x);
 				Location nextLoc = new Location(y, x - 1);
-
 				if (grid.getImage(currentLoc) != null
 						&& (grid.getImage(nextLoc) == null || !grid.getImage(nextLoc).equals(userImage()))) {
 					grid.setImage(nextLoc, grid.getImage(currentLoc));
 					grid.setImage(currentLoc, "");
+					
+					
 				}
 			}
 		}
+		if (imgComingAtUser != null)
+			handleCollision(imgComingAtUser, 0);
 	}
 
-	private void handleCollision(Location loc, int handle) {
-		if (grid.getImage(loc).equals("get.png") || (grid.getImage(loc).equals("avoid.png") && invul)) {
+	private void handleCollision(String img, int handle) {
+		if (img.equals("get.png") || (img.equals("avoid.png") && invul)) {
 			Sound.playSound("get");
 
 			if (++timesGet == 100) {
@@ -146,10 +152,9 @@ public class Game {
 			}
 			increaseSpeed();
 
-		} else if (grid.getImage(loc).equals("avoid.png")) {
+		} else if (img.equals("avoid.png")) {
 
 			if (handle == 0) {
-				grid.setImage(loc, "");
 				grid.setImage(new Location(this.userRowLocation(), 0), "avoid.png");
 			} else {
 				grid.setImage(new Location(this.userRowLocation(), 0), "");
@@ -159,10 +164,10 @@ public class Game {
 			timesAvoid++;
 			Grid.pause(3000);
 			resetScreen();
-		} else if (grid.getImage(loc).equals("life.png")) {
+		} else if (img.equals("life.png")) {
 			Sound.playSound("life");
 			timesAvoid--;
-		} else if (grid.getImage(loc).equals("invul.png")) {
+		} else if (img.equals("invul.png")) {
 			invul = true;
 			Sound.playSound("invul");
 			grid.setImage(new Location(this.userRowLocation(), 0), "useri.png");
@@ -188,7 +193,7 @@ public class Game {
 	}
 
 	private boolean isGameOver() {
-		return timesAvoid == 3 || timesGet == 100;
+		return timesAvoid == 3 || timesGet >= 100;
 	}
 
 	private void resetScreen() {
