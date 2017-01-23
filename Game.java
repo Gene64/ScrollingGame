@@ -5,7 +5,7 @@ public class Game {
 	private int timesGet;
 	private int timesAvoid;
 	private int level = 1;
-	private bool invulnerable;
+	private boolean invulnerable;
 
 	public Game() {
 		grid = new Grid(5, 10);
@@ -14,7 +14,7 @@ public class Game {
 		timesGet = 0;
 		timesAvoid = 0;
 		updateTitle();
-		grid.setImage(new Location(userRow, 0), "user.gif");
+		grid.setImage(new Location(userRow, 0), "user.png");
 	}
 
 	private void play() {
@@ -28,60 +28,64 @@ public class Game {
 			updateTitle();
 			msElapsed += 100;
 		}
-		grid.setImage(new Location(0, 0), "gameover.gif");
+		grid.setImage(new Location(0, 0), "gameover.png");
 		Sound.playSound("gameover.wav");
 	}
 
 	private int userRowLocation() {
 		for (int i = 0; i < 5; i++) {
 
-			if (grid.getImage(new Location(i, 0)).equals("user.gif"))
+			if (grid.getImage(new Location(i, 0)).equals("user.png"))
 				return i;
 		}
 		return 0;
 	}
 
 	private void handleKeyPress() {
+		
 		int key = grid.checkLastKeyPressed();
+		
 		Location originalLoc = new Location(userRowLocation(), 0);
 
-		if (key == 38) {
-			if (originalLoc.getRow() == 0)
-				return;
-
+		if (key == 38 && originalLoc.getRow() != 0) {
 			Location newLoc = new Location(originalLoc.getRow() - 1, 0);
 
 			if (grid.getImage(newLoc) != null)
 				handleCollision(newLoc);
 
-			grid.setImage(newLoc, "user.gif");
+			grid.setImage(newLoc, "user.png");
 			grid.setImage(originalLoc, "");
 
-		} else if (key == 40) {
-			if (originalLoc.getRow() == 4)
-				return;
+		} else if (key == 40 && originalLoc.getRow() != 4) {
 
 			Location newLoc = new Location(originalLoc.getRow() + 1, 0);
 
 			if (grid.getImage(newLoc) != null)
 				handleCollision(newLoc);
 
-			grid.setImage(newLoc, "user.gif");
+			grid.setImage(newLoc, "user.png");
 			grid.setImage(originalLoc, "");
 		}
 	}
 
 	private void populateRightEdge() {
 		Location loc = new Location((int) (Math.random() * 5), 9);
+		
+		double random = Math.random();
 
-		if (Math.random() < 0.4) {
-			grid.setImage(loc, "avoid.gif");
+		if (random < 0.4) {
+			grid.setImage(loc, "avoid.png");
+		} else if (random < 0.98) {
+			grid.setImage(loc, "get.png");
+		} else if (random < 0.99){
+			grid.setImage(loc, "life.png");
 		} else {
-			grid.setImage(loc, "get.gif");
+			grid.setImage(loc, "invul.png");
 		}
 	}
 
 	private void scrollLeft() {
+		
 		if (grid.getImage(new Location(userRowLocation(), 1)) != null)
 			handleCollision(new Location(userRowLocation(), 1));
 
@@ -90,10 +94,9 @@ public class Game {
 			// Rows
 			for (int y = 0; y < 5; y++) {
 				Location currentLoc = new Location(y, x);
-				Location moveLeftLoc = new Location(y, x - 1);
 
 				if (grid.getImage(currentLoc) != null) {
-					grid.setImage(moveLeftLoc, grid.getImage(currentLoc));
+					grid.setImage(new Location(y, x - 1), grid.getImage(currentLoc));
 					grid.setImage(currentLoc, "");
 				}
 			}
@@ -101,17 +104,25 @@ public class Game {
 	}
 
 	private void handleCollision(Location loc) {
-		if (grid.getImage(loc).equals("get.gif")) {
+		
+		if (grid.getImage(loc).equals("get.png") || (grid.getImage(loc).equals("avoid.png") && invulnerable)) {
 			Sound.playSound("get.wav");
 			timesGet++;
 			updateLevel();
-		} else if (grid.getImage(loc).equals("avoid.gif")) {
+		} else if (grid.getImage(loc).equals("avoid.png")) {
 			grid.setImage(loc, "");
-			grid.setImage(new Location(this.userRowLocation(), 0), "avoid.gif");
+			grid.setImage(new Location(this.userRowLocation(), 0), "avoid.png");
 			Sound.playSound("avoid.wav");
 			timesAvoid++;
 			Grid.pause(3000);
 			resetScreen();
+		} else if (grid.getImage(loc).equals("life.png")) {
+			Sound.playSound("life.wav");
+			timesAvoid--;
+			updateLevel();
+		} else if (grid.getImage(loc).equals("invul.png")){
+			Sound.playSound("invul.wav");
+			invulnerable = true;
 		}
 
 		grid.setImage(loc, null);
@@ -150,6 +161,6 @@ public class Game {
 				}
 			}
 		}
-		grid.setImage(new Location(0, 0), "user.gif");
+		grid.setImage(new Location(0, 0), "user.png");
 	}
 }
