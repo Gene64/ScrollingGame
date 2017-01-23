@@ -1,8 +1,6 @@
 /**
-* Collaboration:
-* - Looked up how to play sound
-* - Looked up how to use a timer
-*/
+ * Collaboration: - Looked up how to play sound - Looked up how to use a timer
+ */
 
 public class Game {
 	private Grid grid;
@@ -25,7 +23,7 @@ public class Game {
 
 	private void play() {
 		while (!isGameOver()) {
-			Grid.pause((int)(100 * speed));
+			Grid.pause((int) (100 * speed));
 			handleKeyPress();
 			if (msElapsed % 300 == 0) {
 				scrollLeft();
@@ -33,7 +31,7 @@ public class Game {
 			}
 			updateTitle();
 			msElapsed += 100;
-			
+
 			if (invul && InvulTimer.getTimerTick() == 10) {
 				invul = false;
 				InvulTimer.resetTimer();
@@ -42,7 +40,7 @@ public class Game {
 		setGameOverScreen();
 		Sound.playSound("gameover");
 	}
-	
+
 	private void setGameOverScreen() {
 		if (timesAvoid == 3) {
 			for (int x = 0; x < 10; x++) {
@@ -71,9 +69,9 @@ public class Game {
 	}
 
 	private void handleKeyPress() {
-		
+
 		int key = grid.checkLastKeyPressed();
-		
+
 		Location originalLoc = new Location(userRowLocation(), 0);
 
 		if (key == 38 && originalLoc.getRow() != 0) {
@@ -99,14 +97,14 @@ public class Game {
 
 	private void populateRightEdge() {
 		Location loc = new Location((int) (Math.random() * 5), 9);
-		
+
 		double random = Math.random();
 
 		if (random < 0.4) {
 			grid.setImage(loc, "avoid.png");
 		} else if (random < 0.98) {
 			grid.setImage(loc, "get.png");
-		} else if (random < 0.99){
+		} else if (random < 0.99) {
 			grid.setImage(loc, "life.png");
 		} else if (!invul) {
 			grid.setImage(loc, "invul.png");
@@ -116,7 +114,7 @@ public class Game {
 	}
 
 	private void scrollLeft() {
-		
+
 		if (grid.getImage(new Location(userRowLocation(), 1)) != null)
 			handleCollision(new Location(userRowLocation(), 1), 0);
 
@@ -125,9 +123,10 @@ public class Game {
 			// Rows
 			for (int y = 0; y < 5; y++) {
 				Location currentLoc = new Location(y, x);
-				Location nextLoc = new Location(y, x -1);
+				Location nextLoc = new Location(y, x - 1);
 
-				if (grid.getImage(currentLoc) != null && (grid.getImage(nextLoc) == null || !grid.getImage(nextLoc).equals(userImage()))) {
+				if (grid.getImage(currentLoc) != null
+						&& (grid.getImage(nextLoc) == null || !grid.getImage(nextLoc).equals(userImage()))) {
 					grid.setImage(nextLoc, grid.getImage(currentLoc));
 					grid.setImage(currentLoc, "");
 				}
@@ -138,7 +137,7 @@ public class Game {
 	private void handleCollision(Location loc, int handle) {
 		if (grid.getImage(loc).equals("get.png") || (grid.getImage(loc).equals("avoid.png") && invul)) {
 			Sound.playSound("get");
-			
+
 			if (++timesGet == 100) {
 				updateTitle();
 				Sound.playSound("win");
@@ -146,16 +145,16 @@ public class Game {
 				return;
 			}
 			increaseSpeed();
-			
+
 		} else if (grid.getImage(loc).equals("avoid.png")) {
-			
+
 			if (handle == 0) {
 				grid.setImage(loc, "");
 				grid.setImage(new Location(this.userRowLocation(), 0), "avoid.png");
 			} else {
 				grid.setImage(new Location(this.userRowLocation(), 0), "");
 			}
-			
+
 			Sound.playSound("avoid");
 			timesAvoid++;
 			Grid.pause(3000);
@@ -163,7 +162,7 @@ public class Game {
 		} else if (grid.getImage(loc).equals("life.png")) {
 			Sound.playSound("life");
 			timesAvoid--;
-		} else if (grid.getImage(loc).equals("invul.png")){
+		} else if (grid.getImage(loc).equals("invul.png")) {
 			invul = true;
 			Sound.playSound("invul");
 			grid.setImage(new Location(this.userRowLocation(), 0), "useri.png");
@@ -174,7 +173,7 @@ public class Game {
 	private int getScore() {
 		return timesGet;
 	}
-	
+
 	private void increaseSpeed() {
 		speed -= 0.01f;
 	}
@@ -191,7 +190,7 @@ public class Game {
 	private boolean isGameOver() {
 		return timesAvoid == 3 || timesGet == 100;
 	}
-	
+
 	private void resetScreen() {
 		for (int x = 0; x < 10; x++) {
 			for (int y = 0; y < 5; y++) {
@@ -203,13 +202,13 @@ public class Game {
 		}
 		grid.setImage(new Location(0, 0), "user.png");
 	}
-	
+
 	private String userImage() {
 		if (invul)
 			return "useri.png";
 		return "user.png";
 	}
-	
+
 	public static void main(String[] args) {
 		new Game().play();
 	}
