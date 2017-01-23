@@ -33,9 +33,9 @@ public class Game {
 			updateTitle();
 			msElapsed += 100;
 			
-			if (invul && ++msInvul == 100) {
+			
+			if (invul && InvulTimer.getTimerTick() == 10) {
 				invul = false;
-				msInvul = 0;
 			}
 		}
 		setGameOverScreen();
